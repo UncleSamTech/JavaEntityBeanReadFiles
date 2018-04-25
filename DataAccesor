@@ -1,0 +1,110 @@
+package data;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.EJBException;
+import javax.ejb.EntityBean;
+import javax.ejb.EntityContext;
+import javax.ejb.LocalBean;
+import javax.ejb.RemoveException;
+import javax.ejb.Stateless;
+
+/**
+ This java bean is an entity bean for accesing external storage of files. There are several beans that could be used 
+ to achieve this but entity bean is the best bean to use for this
+ It uses the two methods 
+ @method ejbLoad() and ejbStore() to load and store the files
+ for future access
+ */
+public class DataAccessor implements EntityBean {
+
+	private List<String> data;
+	
+    /**
+     * Default constructor. 
+     */
+    public DataAccessor() {
+        // TODO Auto-generated constructor stub
+    }
+
+	@Override
+	public void ejbActivate() throws EJBException, RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+/**
+  This method ejbLoad() is used for reading all the files in the datasouurce
+  and saves it in an array list of String
+*/
+	@Override
+	public void ejbLoad() throws EJBException, RemoteException {
+		Path p = FileSystems.getDefault().getPath("Datasource.txt");
+		Charset c = Charset.defaultCharset();
+		try {
+			data = Files.readAllLines(p, c);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void ejbPassivate() throws EJBException, RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void ejbRemove() throws RemoveException, EJBException,
+			RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+  /**
+  This method ejbStore() is similar to ejbLoad() but writes files
+read from the ejbLoad() and stores it
+  */
+
+	@Override
+	public void ejbStore() throws EJBException, RemoteException {
+		Path p = FileSystems.getDefault().getPath("Datasource.txt");
+		Charset c = Charset.defaultCharset();
+		try {
+			Files.write(p, data, c);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void setEntityContext(EntityContext arg0) throws EJBException,
+			RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unsetEntityContext() throws EJBException, RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+	
+  /**
+  This method modifyData() accepts two parameters
+  @params line of integer datatype and newData of String data type and 
+  uses it to modify the data 
+  */
+	public void modifyData(int line, String newData) {
+		data.set(line, newData);
+	}
+
+}
